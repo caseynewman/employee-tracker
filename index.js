@@ -66,10 +66,10 @@ const start = async() => {
     // if selection equals
     switch(selection) {
         case "VIEW EMP":
-            viewEmployee();
+            console.log(await viewEmployee());
             break
         case "VIEW ROLE":
-            viewRole();
+            console.log(await viewRole());
             break
         case "VIEW DEPT":
             console.log(await viewDepartment());
@@ -91,8 +91,8 @@ const start = async() => {
                 },
                 {
                     type: "list",
-                    message: "Select the department:",
                     name: "department_id",
+                    message: "Select the department:",
                     choices: (await viewDepartment()).map(dept => {
                         return {name: dept.name, value: dept.id}
                     })
