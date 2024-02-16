@@ -29,32 +29,36 @@ const start = async() => {
     const response = await inquirer.prompt([
         {
             type: "list",
-            message: "choose an option below:",
+            message: "Choose an option below:",
             name: "selection",
             choices: [
                 {
-                    name: "view employees",
+                    name: "View employees",
                     value: "VIEW EMP"
                 },
                 {
-                    name: "view roles",
+                    name: "View roles",
                     value: "VIEW ROLE"
                 },
                 {
-                    name: "view departments",
+                    name: "View departments",
                     value: "VIEW DEPT"
                 },
                 {
-                    name: "add employee",
+                    name: "Add employee",
                     value: "ADD EMP"
                 },
                 {
-                    name: "add role",
+                    name: "Add role",
                     value: "ADD ROLE"
                 },
                 {
-                    name: "add department",
+                    name: "Add department",
                     value: "ADD DEPT"
+                },
+                {
+                    name: "Update employee role",
+                    value: "UPDATE EMP ROLE"
                 }
             ]
         }
@@ -78,16 +82,16 @@ const start = async() => {
             addEmployee();
             break
         case "ADD ROLE":
-            const role = await inquirer.prompt([
+            const newRole = await inquirer.prompt([
                 {
                     type: "input",
                     name: "title",
-                    message: "Enter the title"
+                    message: "Enter the new title:"
                 },
                 {
                     type: "input",
                     name: "salary",
-                    message: "Enter the salary"
+                    message: "Enter the salary:"
                 },
                 {
                     type: "list",
@@ -99,8 +103,8 @@ const start = async() => {
                 }
 
             ])
-            console.log(role)
-            addRole();
+            console.log(newRole)
+            addRole(newRole.title);
             break
         case "ADD DEPT":
             //validating user input
@@ -112,6 +116,8 @@ const start = async() => {
                 }
             ])
             addDepartment(newDepartment.department);
+            break
+        case "UPDATE EMP ROLE":
             break
     }
 
