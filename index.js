@@ -6,13 +6,18 @@ const viewEmployee = async() => {
     return(result[0]);
 }
 
-const addEmployee = async() => {
-    const result = viewEmployee();
+const addEmployee = async(employee) => {
+    // const result = viewEmployee();
+    const result = await sequelize.query(`INSERT INTO employee (name) values ('${employee}')`);
 }
 
 const viewRole = async() => {
     const result = await sequelize.query("SELECT * FROM role");
     return(result[0]);
+}
+
+const addRole = async(role) => {
+    const result = await sequelize.query(`INSERT INTO role (title) values ('${role}')`);
 }
 
 const viewDepartment = async() => {
