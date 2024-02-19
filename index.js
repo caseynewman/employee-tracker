@@ -7,7 +7,6 @@ const viewEmployee = async() => {
 }
 
 const addEmployee = async(employee) => {
-    // const result = viewEmployee();
     const result = await sequelize.query(`INSERT INTO employee (fname, lname) VALUES ('${employee.fname}', '${employee.lname}')`);
 }
 
@@ -84,7 +83,28 @@ const start = async() => {
             console.log(await viewDepartment());
             break
         case "ADD EMP":
-            addEmployee();
+            const newEmployee = await inquirer.prompt([
+                {
+                    type: "input",
+                    name: "fname",
+                    message: "Enter the employee's first name:"
+                },
+                {
+                    type: "input",
+                    name: "lname",
+                    message: "Enter the employee's last name:"
+                },
+                {
+                    type: "list",
+                    name: "role",
+                    message: "Select the employee's role:",
+                    choices: (await viewRole()).map(role => {
+                        return {name: role.title, value: role.id}
+                    })
+                }
+            ])
+            console.log(newEmployee);
+            addEmployee(newEmployee);
             break
         case "ADD ROLE":
             const newRole = await inquirer.prompt([
@@ -108,7 +128,7 @@ const start = async() => {
                 }
 
             ])
-            console.log(newRole)
+            console.log(newRole);
             addRole(newRole);
             break
         case "ADD DEPT":
