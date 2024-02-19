@@ -8,7 +8,7 @@ const viewEmployee = async() => {
 
 const addEmployee = async(employee) => {
     // const result = viewEmployee();
-    const result = await sequelize.query(`INSERT INTO employee (name) values ('${employee}')`);
+    const result = await sequelize.query(`INSERT INTO employee (fname, lname) VALUES ('${employee.fname}', '${employee.lname}')`);
 }
 
 const viewRole = async() => {
@@ -17,7 +17,7 @@ const viewRole = async() => {
 }
 
 const addRole = async(role) => {
-    const result = await sequelize.query(`INSERT INTO role (title) values ('${role}')`);
+    const result = await sequelize.query(`INSERT INTO role (title, salary, department_id) VALUES ('${role.title}', '${role.salary}', '${role.department_id}')`);
 }
 
 const viewDepartment = async() => {
@@ -27,7 +27,7 @@ const viewDepartment = async() => {
 }
 
 const addDepartment = async(department) => {
-    const result = await sequelize.query(`INSERT INTO department (name) values ('${department}')`);
+    const result = await sequelize.query(`INSERT INTO department (name) VALUES ('${department}')`);
 }
 
 const start = async() => {
@@ -109,10 +109,10 @@ const start = async() => {
 
             ])
             console.log(newRole)
-            addRole(newRole.title);
+            addRole(newRole);
             break
         case "ADD DEPT":
-            //validating user input
+            //validate user input
             const newDepartment = await inquirer.prompt([
                 {
                     type: "input",
