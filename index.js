@@ -73,13 +73,13 @@ const start = async() => {
     // if selection equals
     switch(selection) {
         case "VIEW EMP":
-            console.log(await viewEmployee());
+            console.table(await viewEmployee());
             break
         case "VIEW ROLE":
-            console.log(await viewRole());
+            console.table(await viewRole());
             break
         case "VIEW DEPT":
-            console.log(await viewDepartment());
+            console.table(await viewDepartment());
             break
         case "ADD EMP":
             const newEmployee = await inquirer.prompt([
