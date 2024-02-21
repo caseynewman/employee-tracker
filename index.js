@@ -33,9 +33,7 @@ const addDepartment = async(department) => {
 
 const viewManager = async(manager_id) => {
     const result = await sequelize.query("SELECT manager_id FROM employee");
-    while (manager_id !== null) {
-        return(result[0]);
-    }
+    return(result[0]);
 }
 
 const start = async() => {
@@ -96,12 +94,24 @@ const start = async() => {
                 {
                     type: "input",
                     name: "fname",
-                    message: "Enter the employee's first name:"
+                    message: "Enter the employee's first name:",
+                    validate: function(input, answers) {
+                        if (input.length > 30) {
+                            return 'Must not be longer than 30 characters!'
+                        }
+                        return true
+                    }
                 },
                 {
                     type: "input",
                     name: "lname",
-                    message: "Enter the employee's last name:"
+                    message: "Enter the employee's last name:",
+                    validate: function(input, answers) {
+                        if (input.length > 30) {
+                            return 'Must not be longer than 30 characters!'
+                        }
+                        return true
+                    }
                 },
                 {
                     type: "list",
@@ -116,7 +126,9 @@ const start = async() => {
                     name: "manager_id",
                     message: "Select the employee's manager:",
                     choices: (await viewManager()).map(employee => {
-                        return {name: employee.manager_id, value: employee.manager_id}
+                        if (employee.manager_id !== null) {
+                            return {name: employee.manager_id, value: employee.manager_id};
+                        }
                     })
                 }
             ])
@@ -128,7 +140,13 @@ const start = async() => {
                 {
                     type: "input",
                     name: "title",
-                    message: "Enter the new title:"
+                    message: "Enter the new title:",
+                    validate: function(input, answers) {
+                        if (input.length > 30) {
+                            return 'Must not be longer than 30 characters!'
+                        }
+                        return true
+                    }
                 },
                 {
                     type: "input",
@@ -154,13 +172,20 @@ const start = async() => {
                 {
                     type: "input",
                     name: "department",
-                    message: "Enter a new department:"
+                    message: "Enter a new department:",
+                    validate: function(input, answers) {
+                        if (input.length > 30) {
+                            return 'Must not be longer than 30 characters!'
+                        }
+                        return true
+                    }
                 }
             ])
             addDepartment(newDepartment.department);
             console.table(newDepartment.department);
             break
         case "UPDATE EMP ROLE":
+            
             break
     }
 
