@@ -8,6 +8,7 @@ const viewEmployee = async() => {
 
 const addEmployee = async(employee) => {
     const result = await sequelize.query(`INSERT INTO employee (fname, lname, role_id, manager_id) VALUES ('${employee.fname}', '${employee.lname}', '${employee.role_id}', '${employee.manager_id}')`);
+    console.log(`${employee.fname} was successfully added to the database!`);
 }
 
 const viewRole = async() => {
@@ -17,6 +18,7 @@ const viewRole = async() => {
 
 const addRole = async(role) => {
     const result = await sequelize.query(`INSERT INTO role (title, salary, department_id) VALUES ('${role.title}', '${role.salary}', '${role.department_id}')`);
+    console.log(`${role.title} was successfully added to the database!`);
 }
 
 const viewDepartment = async() => {
@@ -26,11 +28,14 @@ const viewDepartment = async() => {
 
 const addDepartment = async(department) => {
     const result = await sequelize.query(`INSERT INTO department (name) VALUES ('${department}')`);
+    console.log(`${department} was successfully added to the database!`);
 }
 
-const viewManager = async() => {
+const viewManager = async(manager_id) => {
     const result = await sequelize.query("SELECT manager_id FROM employee");
-    return(result[0]);
+    while (manager_id !== null) {
+        return(result[0]);
+    }
 }
 
 const start = async() => {
@@ -140,8 +145,8 @@ const start = async() => {
                 }
 
             ])
-            console.log(newRole);
             addRole(newRole);
+            console.table(newRole);
             break
         case "ADD DEPT":
             // VALIDATE USER INPUT
@@ -153,13 +158,12 @@ const start = async() => {
                 }
             ])
             addDepartment(newDepartment.department);
+            console.table(newDepartment.department);
             break
         case "UPDATE EMP ROLE":
             break
     }
 
-
-    console.log(response)
 }
 
 // force true would drop tables every time you connect to db
