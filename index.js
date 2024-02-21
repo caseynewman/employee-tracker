@@ -46,7 +46,7 @@ const start = async() => {
     const response = await inquirer.prompt([
         {
             type: "list",
-            message: "Choose an option below:",
+            message: "What would you like to do?",
             name: "selection",
             choices: [
                 {
@@ -159,7 +159,6 @@ const start = async() => {
                     message: "Select the department:",
                     choices: await viewDepartment()
                 }
-
             ])
             addRole(newRole);
             console.table(newRole);
@@ -182,7 +181,30 @@ const start = async() => {
             console.table(newDepartment.department);
             break
         case "UPDATE EMP ROLE":
-            
+            const updateRole = await inquirer.prompt([
+                {
+                    type: "input",
+                    name: "title",
+                    message: "Enter the new title:",
+                    validate: function(input, answers) {
+                        if (input.length > 30) {
+                            return 'Must not be longer than 30 characters!'
+                        }
+                        return true
+                    }
+                },
+                {
+                    type: "input",
+                    name: "salary",
+                    message: "Enter the salary:"
+                },
+                {
+                    type: "list",
+                    name: "department_id",
+                    message: "Select the department:",
+                    choices: await viewDepartment()
+                }
+            ])
             break
     }
 
