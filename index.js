@@ -7,7 +7,7 @@ const viewEmployee = async() => {
 }
 
 const addEmployee = async(employee) => {
-    const result = await sequelize.query(`INSERT INTO employee (fname, lname, role_id) VALUES ('${employee.fname}', '${employee.lname}', '${employee.role_id}')`);
+    const result = await sequelize.query(`INSERT INTO employee (fname, lname, role_id, manager_id) VALUES ('${employee.fname}', '${employee.lname}', '${employee.role_id}', '${employee.manager_id}')`);
 }
 
 const viewRole = async() => {
@@ -26,6 +26,11 @@ const viewDepartment = async() => {
 
 const addDepartment = async(department) => {
     const result = await sequelize.query(`INSERT INTO department (name) VALUES ('${department}')`);
+}
+
+const viewManager = async() => {
+    const result = await sequelize.query("SELECT manager_id FROM employee");
+    return(result[0]);
 }
 
 const start = async() => {
@@ -100,11 +105,18 @@ const start = async() => {
                     choices: (await viewRole()).map(role => {
                         return {name: role.title, value: role.id}
                     })
+                },
+                {
+                    type: "list",
+                    name: "manager_id",
+                    message: "Select the employee's manager:",
+                    choices: (await viewManager()).map(employee => {
+                        return {name: employee.manager_id, value: employee.manager_id}
+                    })
                 }
-                // NEED TO ADD MANAGER??
             ])
-            console.log(newEmployee);
             addEmployee(newEmployee);
+            console.table(newEmployee);
             break
         case "ADD ROLE":
             const newRole = await inquirer.prompt([
