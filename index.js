@@ -3,7 +3,7 @@ const inquirer = require('inquirer');
 
 const viewEmployee = async() => {
     const result = await sequelize.query("SELECT * FROM employee");
-    return(result[0]);
+    return result[0];
 }
 
 const addEmployee = async(employee) => {
@@ -13,7 +13,9 @@ const addEmployee = async(employee) => {
 
 const viewRole = async() => {
     const result = await sequelize.query("SELECT * FROM role");
-    return(result[0]);
+    return result[0].map(role => {
+        return {name: role.title, value: role.id}
+    });
 }
 
 const addRole = async(role) => {
@@ -23,7 +25,9 @@ const addRole = async(role) => {
 
 const viewDepartment = async() => {
     const result = await sequelize.query("SELECT * FROM department");
-    return(result[0]);
+    return result[0].map(dept => {
+        return {name: dept.name, value: dept.id}
+    });
 }
 
 const addDepartment = async(department) => {
@@ -31,9 +35,11 @@ const addDepartment = async(department) => {
     console.log(`${department} was successfully added to the database!`);
 }
 
-const viewManager = async(manager_id) => {
-    const result = await sequelize.query("SELECT manager_id FROM employee");
-    return(result[0]);
+const viewManager = async(employee) => {
+    const result = await sequelize.query("SELECT id, fname, lname FROM employee");
+    return result[0].map(employee => {
+        return {name: `${employee.fname} ${employee.lname}`, value: employee.id};
+    })
 }
 
 const start = async() => {
@@ -117,19 +123,13 @@ const start = async() => {
                     type: "list",
                     name: "role_id",
                     message: "Select the employee's role:",
-                    choices: (await viewRole()).map(role => {
-                        return {name: role.title, value: role.id}
-                    })
+                    choices: await viewRole()
                 },
                 {
                     type: "list",
                     name: "manager_id",
-                    message: "Select the employee's manager:",
-                    choices: (await viewManager()).map(employee => {
-                        if (employee.manager_id !== null) {
-                            return {name: employee.manager_id, value: employee.manager_id};
-                        }
-                    })
+                    message: "Select the employee's manager ID:",
+                    choices: await viewManager()
                 }
             ])
             addEmployee(newEmployee);
@@ -157,9 +157,7 @@ const start = async() => {
                     type: "list",
                     name: "department_id",
                     message: "Select the department:",
-                    choices: (await viewDepartment()).map(dept => {
-                        return {name: dept.name, value: dept.id}
-                    })
+                    choices: await viewDepartment()
                 }
 
             ])
@@ -167,7 +165,6 @@ const start = async() => {
             console.table(newRole);
             break
         case "ADD DEPT":
-            // VALIDATE USER INPUT
             const newDepartment = await inquirer.prompt([
                 {
                     type: "input",
@@ -193,3 +190,15 @@ const start = async() => {
 
 // force true would drop tables every time you connect to db
 sequelize.sync({force: false}).then(start);
+
+
+
+// MOVE FUNCTIONS INTO SEPARATE FILES - USE CLASSES
+// UPDATE EMPLOYEE ROLE
+
+
+// UPDATE EMPLOYEE MANAGERS
+// VIEW EMPLOYEES BY MANAGER
+// VIEW EMPLOYEES BY DEPARTMENT
+// DELETE DEPTS, ROLES, AND EMPLOYEES
+// VIEW TOTAL UTILIZED BUDGET OF DEPT
