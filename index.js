@@ -2,7 +2,7 @@ const sequelize = require('./config/connection');
 const inquirer = require('inquirer');
 
 const viewEmployee = async() => {
-    const result = await sequelize.query("SELECT * FROM employee");
+    const result = await sequelize.query("SELECT employee.*, role.* FROM employee LEFT JOIN role ON role.id = employee.role_id LEFT JOIN department.");
     return result[0];
 }
 
