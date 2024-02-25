@@ -1,9 +1,16 @@
 const sequelize = require('./config/connection');
 const inquirer = require('inquirer');
 
+const viewEmployeeTable = async() => {
+    const result = await sequelize.query("SELECT employee.*, role.* FROM employee LEFT JOIN role ON role.id = employee.role_id");
+    return result[0]
+}
+
 const viewEmployee = async() => {
-    const result = await sequelize.query("SELECT employee.*, role.* FROM employee LEFT JOIN role ON role.id = employee.role_id LEFT JOIN department.");
-    return result[0];
+    const result = await viewEmployeeTable();
+    return result.map(employee => {
+        return {name: `${employee.fname} ${employee.lname}`, value: employee.id}
+    });
 }
 
 const addEmployee = async(employee) => {
@@ -41,6 +48,10 @@ const viewManager = async(employee) => {
         return {name: `${employee.fname} ${employee.lname}`, value: employee.id};
     })
 }
+
+// const updateRole = async() => {
+//     const result = await sequelize.query("")
+// }
 
 const start = async() => {
     const response = await inquirer.prompt([
@@ -87,7 +98,7 @@ const start = async() => {
     // if selection equals
     switch(selection) {
         case "VIEW EMP":
-            console.table(await viewEmployee());
+            console.table(await viewEmployeeTable());
             break
         case "VIEW ROLE":
             console.table(await viewRole());
@@ -181,29 +192,20 @@ const start = async() => {
             console.table(newDepartment.department);
             break
         case "UPDATE EMP ROLE":
-            const updateRole = await inquirer.prompt([
+            const updatedRole = await inquirer.prompt([
                 {
-                    type: "input",
-                    name: "title",
-                    message: "Enter the new title:",
-                    validate: function(input, answers) {
-                        if (input.length > 30) {
-                            return 'Must not be longer than 30 characters!'
-                        }
-                        return true
-                    }
-                },
-                {
-                    type: "input",
-                    name: "salary",
-                    message: "Enter the salary:"
+                    type: "list",
+                    name: "employee",
+                    message: "Choose the employee you would like to update",
+                    choices: await viewEmployee()
                 },
                 {
                     type: "list",
-                    name: "department_id",
-                    message: "Select the department:",
-                    choices: await viewDepartment()
+                    name: "role_id",
+                    message: "Select the employee's new role:",
+                    choices: await viewRole()
                 }
+            // updateRole()
             ])
             break
     }
