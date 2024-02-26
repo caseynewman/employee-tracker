@@ -1,6 +1,6 @@
 const sequelize = require('./config/connection');
 const inquirer = require('inquirer');
-const { viewEmployeeTable, viewEmployeeList, addEmployee, deleteEmployee, viewManager, updateRole } = require('./library/employee');
+const { viewEmployeeTable, viewEmployeeList, addEmployee, deleteEmployee, viewManager, updateRole, updateEmpManager } = require('./library/employee');
 const { viewRole, addRole } = require('./library/role');
 const { viewDepartment, addDepartment } = require('./library/department');
 
@@ -38,6 +38,10 @@ const start = async () => {
                 {
                     name: "Update employee role",
                     value: "UPDATE EMP ROLE"
+                },
+                {
+                    name: "Update employee manager",
+                    value: "UPDATE EMP MANAGER"
                 },
                 {
                     name: "Delete employee",
@@ -163,6 +167,25 @@ const start = async () => {
             ]);
             await updateRole(newRoleId.newRole_id, employeeId.employee_id);
             break;
+            case "UPDATE EMP MANAGER":
+                const employeeSelect = await inquirer.prompt([
+                    {
+                        type: "list",
+                        name: "employee_id",
+                        message: "Choose the employee you would like to update",
+                        choices: await viewEmployeeList()
+                    }
+                ]);
+                const newManagerId = await inquirer.prompt([
+                    {
+                        type: "list",
+                        name: "newManager_id",
+                        message: "Select the employee's new manager:",
+                        choices: await viewManager()
+                    }
+                ]);
+                await updateEmpManager(newManagerId.newManager_id, employeeSelect.employee_id);
+                break;
         case "DELETE EMP":
             const deletedEmp = await inquirer.prompt([
                 {

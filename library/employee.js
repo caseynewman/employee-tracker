@@ -59,4 +59,13 @@ const updateRole = async (newRole_id, employee_id) => {
     }
 }
 
-module.exports = { viewEmployeeTable, viewEmployeeList, addEmployee, deleteEmployee, viewManager, updateRole };
+const updateEmpManager = async (newManager_id, employee_id) => {
+    try {
+        const result = await sequelize.query('UPDATE employee SET manager_id = ? WHERE id = ?', { replacements: [newManager_id, employee_id] });
+        console.log('Manager successfully updated!');
+    } catch (error) {
+        console.error('Failed to update manager:', error);
+    }
+}
+
+module.exports = { viewEmployeeTable, viewEmployeeList, addEmployee, deleteEmployee, viewManager, updateRole, updateEmpManager };
