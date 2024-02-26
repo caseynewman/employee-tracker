@@ -1,105 +1,8 @@
 const sequelize = require('./config/connection');
 const inquirer = require('inquirer');
-
-const viewEmployeeTable = async () => {
-    try {
-        // const result = await sequelize.query('SELECT employee.*, role.* FROM employee LEFT JOIN role ON role.id = employee.role_id');
-        const result = await sequelize.query('SELECT employee.*, role.title, role.salary, role.department_id FROM employee INNER JOIN role ON employee.role_id = role.id ');
-
-        return result[0]
-    } catch (error) {
-        console.error('An error occurred:', error);
-    }
-}
-
-const viewEmployeeList = async () => {
-    try {
-        const result = await sequelize.query('SELECT * FROM employee');
-        return result[0].map(employee => {
-            return { name: `${employee.fname} ${employee.lname}`, value: employee.id }
-        });
-    } catch (error) {
-        console.error('An error occurred:', error);
-    }
-}
-
-const addEmployee = async (employee) => {
-    try {
-        const result = await sequelize.query('INSERT INTO employee (fname, lname, role_id, manager_id) VALUES (?, ?, ?, ?)', { replacements: [employee.fname, employee.lname, employee.role_id, employee.manager_id] });
-        console.log(`${employee.fname} ${employee.lname} was successfully added to the database!`);
-    } catch (error) {
-        console.error('Failed to add employee:', error);
-    }
-}
-
-const deleteEmployee = async (employee_id) => {
-    try {
-        const result = await sequelize.query('DELETE FROM employee WHERE id = ?', { replacements: [employee_id] });
-        console.log('Employee successfully deleted!');
-    } catch (error) {
-        console.error('Failed to delete employee:', error);
-    }
-}
-
-const viewRole = async () => {
-    try {
-        const result = await sequelize.query("SELECT * FROM role");
-        return result[0].map(role => {
-            return { name: role.title, value: role.id }
-        });
-    } catch (error) {
-        console.error('An error occurred:', error);
-    }
-}
-
-const addRole = async (role) => {
-    try {
-        const result = await sequelize.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', { replacements: [role.title, role.salary, role.department_id] });
-        console.log(`${role.title} was successfully added to the database!`);
-    } catch (error) {
-        console.error('Failed to add role:', error);
-    }
-}
-
-const viewDepartment = async () => {
-    try {
-        const result = await sequelize.query("SELECT * FROM department");
-        return result[0].map(dept => {
-            return { name: dept.name, value: dept.id }
-        });
-    } catch (error) {
-        console.error('An error occurred:', error);
-    }
-}
-
-const addDepartment = async (department) => {
-    try {
-        const result = await sequelize.query('INSERT INTO department (name) VALUES (?)', { replacements: [department] });
-        console.log(`${department} was successfully added to the database!`);
-    } catch (error) {
-        console.error('Failed to add department:', error);
-    }
-}
-
-const viewManager = async () => {
-    try {
-        const result = await sequelize.query('SELECT id, fname, lname FROM employee');
-        return result[0].map(employee => {
-            return { name: `${employee.fname} ${employee.lname}`, value: employee.id };
-        })
-    } catch (error) {
-        console.error('An error occurred:', error);
-    }
-}
-
-const updateRole = async (newRole_id, employee_id) => {
-    try {
-        const result = await sequelize.query('UPDATE employee SET role_id = ? WHERE id = ?', { replacements: [newRole_id, employee_id] });
-        console.log('Role successfully updated!');
-    } catch (error) {
-        console.error('Failed to update employee role:', error);
-    }
-}
+const { viewEmployeeTable, viewEmployeeList, addEmployee, deleteEmployee, viewManager, updateRole } = require('./library/employee');
+const { viewRole, addRole } = require('./library/role');
+const { viewDepartment, addDepartment } = require('./library/department');
 
 const start = async () => {
     const response = await inquirer.prompt([
@@ -144,10 +47,8 @@ const start = async () => {
         }
     ])
 
-    // const selection = response.selection;
     const { selection } = response;
 
-    // if selection equals
     switch (selection) {
         case "VIEW EMP":
             console.table(await viewEmployeeTable());
@@ -261,7 +162,6 @@ const start = async () => {
                 }
             ]);
             await updateRole(newRoleId.newRole_id, employeeId.employee_id);
-            // console.log('Employee role updated.');
             break;
         case "DELETE EMP":
             const deletedEmp = await inquirer.prompt([
@@ -274,16 +174,10 @@ const start = async () => {
             ])
             await deleteEmployee(deletedEmp.employee_id);
     }
-
 }
 
-// force true would drop tables every time you connect to db
 sequelize.sync({ force: false }).then(start);
 
-
-
-// MOVE FUNCTIONS INTO SEPARATE FILES - USE CLASSES
-// UPDATE EMPLOYEE ROLE
 
 
 // UPDATE EMPLOYEE MANAGERS
