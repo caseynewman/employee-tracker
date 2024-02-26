@@ -259,7 +259,7 @@ const start = async () => {
                     choices: await viewRole()
                 }
             ]);
-            await updateRole(employeeId.employee_id, newRoleId.newRole_id);
+            await updateRole(newRoleId.newRole_id, employeeId.employee_id);
             // console.log('Employee role updated.');
             break;
         case "DELETE EMP":
