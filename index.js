@@ -49,8 +49,8 @@ const viewManager = async() => {
     })
 }
 
-const updateRole = async(employee) => {
-    const result = await sequelize.query(`INSERT INTO employee (role_id) VALUES ('${employee.role_id}')`);
+const updateRole = async(updatedRole, employee) => {
+    const result = await sequelize.query(`UPDATE employee SET role_id = ${updatedRole.role_id} WHERE id = ${employee.id}`);
     console.log('role updated');
 }
 
