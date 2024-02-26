@@ -3,7 +3,8 @@ const inquirer = require('inquirer');
 
 const viewEmployeeTable = async () => {
     try {
-        const result = await sequelize.query('SELECT employee.*, role.* FROM employee LEFT JOIN role ON role.id = employee.role_id');
+        // const result = await sequelize.query('SELECT employee.*, role.* FROM employee LEFT JOIN role ON role.id = employee.role_id');
+        const result = await sequelize.query('SELECT * FROM employee');
         return result[0]
     } catch (error) {
         console.error('An error occurred:', error);
@@ -27,6 +28,15 @@ const addEmployee = async (employee) => {
         console.log(`${employee.fname} ${employee.lname} was successfully added to the database!`);
     } catch (error) {
         console.error('Failed to add employee:', error);
+    }
+}
+
+const deleteEmployee = async (employee_id) => {
+    try {
+        const result = await sequelize.query('DELETE FROM employee WHERE id = ?', { replacements: [employee_id] });
+        console.log('Employee successfully deleted!');
+    } catch (error) {
+        console.error('Failed to delete employee:', error);
     }
 }
 
@@ -81,9 +91,9 @@ const viewManager = async () => {
     }
 }
 
-const updateRole = async (newRoleId, employeeId) => {
+const updateRole = async (newRole_id, employee_id) => {
     try {
-        const result = await sequelize.query('UPDATE employee SET role_id = ? WHERE id = ?', { replacements: [newRoleId, employeeId] });
+        const result = await sequelize.query('UPDATE employee SET role_id = ? WHERE id = ?', { replacements: [newRole_id, employee_id] });
         console.log('Role successfully updated!');
     } catch (error) {
         console.error('Failed to update employee role:', error);
@@ -124,6 +134,10 @@ const start = async () => {
                 {
                     name: "Update employee role",
                     value: "UPDATE EMP ROLE"
+                },
+                {
+                    name: "Delete employee",
+                    value: "DELETE EMP"
                 }
             ]
         }
@@ -229,25 +243,35 @@ const start = async () => {
             console.table(newDepartment.department);
             break;
         case "UPDATE EMP ROLE":
-            const { employeeId } = await inquirer.prompt([
+            const employeeId = await inquirer.prompt([
                 {
                     type: "list",
-                    name: "employeeId",
+                    name: "employee_id",
                     message: "Choose the employee you would like to update",
                     choices: await viewEmployee()
                 }
             ]);
-            const { newRoleId } = await inquirer.prompt([
+            const newRoleId = await inquirer.prompt([
                 {
                     type: "list",
-                    name: "newRoleId",
+                    name: "newRole_id",
                     message: "Select the employee's new role:",
                     choices: await viewRole()
                 }
             ]);
-            await updateRole(employeeId, newRoleId);
+            await updateRole(employeeId.employee_id, newRoleId.newRole_id);
             // console.log('Employee role updated.');
             break;
+        case "DELETE EMP":
+            const deletedEmp = await inquirer.prompt([
+                {
+                    type: "list",
+                    name: "employee_id",
+                    message: "Which employee would you like to delete?",
+                    choices: await viewEmployee()
+                }
+            ])
+            await deleteEmployee(deletedEmp.employee_id);
     }
 
 }
