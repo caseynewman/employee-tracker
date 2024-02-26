@@ -1,60 +1,96 @@
 const sequelize = require('./config/connection');
 const inquirer = require('inquirer');
 
-const viewEmployeeTable = async() => {
-    const result = await sequelize.query("SELECT employee.*, role.* FROM employee LEFT JOIN role ON role.id = employee.role_id");
-    return result[0]
+const viewEmployeeTable = async () => {
+    try {
+        const result = await sequelize.query('SELECT employee.*, role.* FROM employee LEFT JOIN role ON role.id = employee.role_id');
+        return result[0]
+    } catch (error) {
+        console.error('An error occurred:', error);
+    }
 }
 
-const viewEmployee = async() => {
-    const result = await viewEmployeeTable();
-    return result.map(employee => {
-        return {name: `${employee.fname} ${employee.lname}`, value: employee.id}
-    });
+const viewEmployee = async () => {
+    try {
+        const result = await viewEmployeeTable();
+        return result.map(employee => {
+            return { name: `${employee.fname} ${employee.lname}`, value: employee.id }
+        });
+    } catch (error) {
+        console.error('An error occurred:', error);
+    }
 }
 
-const addEmployee = async(employee) => {
-    const result = await sequelize.query(`INSERT INTO employee (fname, lname, role_id, manager_id) VALUES ('${employee.fname}', '${employee.lname}', '${employee.role_id}', '${employee.manager_id}')`);
-    console.log(`${employee.fname} was successfully added to the database!`);
+const addEmployee = async (employee) => {
+    try {
+        const result = await sequelize.query('INSERT INTO employee (fname, lname, role_id, manager_id) VALUES (?, ?, ?, ?)', { replacements: [employee.fname, employee.lname, employee.role_id, employee.manager_id] });
+        console.log(`${employee.fname} ${employee.lname} was successfully added to the database!`);
+    } catch (error) {
+        console.error('Failed to add employee:', error);
+    }
 }
 
-const viewRole = async() => {
-    const result = await sequelize.query("SELECT * FROM role");
-    return result[0].map(role => {
-        return {name: role.title, value: role.id}
-    });
+const viewRole = async () => {
+    try {
+        const result = await sequelize.query("SELECT * FROM role");
+        return result[0].map(role => {
+            return { name: role.title, value: role.id }
+        });
+    } catch (error) {
+        console.error('An error occurred:', error);
+    }
 }
 
-const addRole = async(role) => {
-    const result = await sequelize.query(`INSERT INTO role (title, salary, department_id) VALUES ('${role.title}', '${role.salary}', '${role.department_id}')`);
-    console.log(`${role.title} was successfully added to the database!`);
+const addRole = async (role) => {
+    try {
+        const result = await sequelize.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', { replacements: [role.title, role.salary, role.department_id] });
+        console.log(`${role.title} was successfully added to the database!`);
+    } catch (error) {
+        console.error('Failed to add role:', error);
+    }
 }
 
-const viewDepartment = async() => {
-    const result = await sequelize.query("SELECT * FROM department");
-    return result[0].map(dept => {
-        return {name: dept.name, value: dept.id}
-    });
+const viewDepartment = async () => {
+    try {
+        const result = await sequelize.query("SELECT * FROM department");
+        return result[0].map(dept => {
+            return { name: dept.name, value: dept.id }
+        });
+    } catch (error) {
+        console.error('An error occurred:', error);
+    }
 }
 
-const addDepartment = async(department) => {
-    const result = await sequelize.query(`INSERT INTO department (name) VALUES ('${department}')`);
-    console.log(`${department} was successfully added to the database!`);
+const addDepartment = async (department) => {
+    try {
+        const result = await sequelize.query('INSERT INTO department (name) VALUES (?)', { replacements: [department] });
+        console.log(`${department} was successfully added to the database!`);
+    } catch (error) {
+        console.error('Failed to add department:', error);
+    }
 }
 
-const viewManager = async() => {
-    const result = await sequelize.query("SELECT id, fname, lname FROM employee");
-    return result[0].map(employee => {
-        return {name: `${employee.fname} ${employee.lname}`, value: employee.id};
-    })
+const viewManager = async () => {
+    try {
+        const result = await sequelize.query('SELECT id, fname, lname FROM employee');
+        return result[0].map(employee => {
+            return { name: `${employee.fname} ${employee.lname}`, value: employee.id };
+        })
+    } catch (error) {
+        console.error('An error occurred:', error);
+    }
 }
 
-const updateRole = async(updatedRole, employee) => {
-    const result = await sequelize.query(`UPDATE employee SET role_id = ${updatedRole.role_id} WHERE id = ${employee.id}`);
-    console.log('role updated');
+const updateRole = async (newRoleId, employeeId) => {
+    try {
+        const result = await sequelize.query('UPDATE employee SET role_id = ? WHERE id = ?', { replacements: [newRoleId, employeeId] });
+        console.log('Role successfully updated!');
+    } catch (error) {
+        console.error('Failed to update employee role:', error);
+    }
 }
 
-const start = async() => {
+const start = async () => {
     const response = await inquirer.prompt([
         {
             type: "list",
@@ -97,23 +133,23 @@ const start = async() => {
     const { selection } = response;
 
     // if selection equals
-    switch(selection) {
+    switch (selection) {
         case "VIEW EMP":
             console.table(await viewEmployeeTable());
-            break
+            break;
         case "VIEW ROLE":
             console.table(await viewRole());
-            break
+            break;
         case "VIEW DEPT":
             console.table(await viewDepartment());
-            break
+            break;
         case "ADD EMP":
             const newEmployee = await inquirer.prompt([
                 {
                     type: "input",
                     name: "fname",
                     message: "Enter the employee's first name:",
-                    validate: function(input, answers) {
+                    validate: function (input) {
                         if (input.length > 30) {
                             return 'Must not be longer than 30 characters!'
                         }
@@ -124,7 +160,7 @@ const start = async() => {
                     type: "input",
                     name: "lname",
                     message: "Enter the employee's last name:",
-                    validate: function(input, answers) {
+                    validate: function (input) {
                         if (input.length > 30) {
                             return 'Must not be longer than 30 characters!'
                         }
@@ -140,20 +176,20 @@ const start = async() => {
                 {
                     type: "list",
                     name: "manager_id",
-                    message: "Select the employee's manager ID:",
+                    message: "Select the employee's manager:",
                     choices: await viewManager()
                 }
-            ])
-            addEmployee(newEmployee);
+            ]);
+            await addEmployee(newEmployee);
             console.table(newEmployee);
-            break
+            break;
         case "ADD ROLE":
             const newRole = await inquirer.prompt([
                 {
                     type: "input",
                     name: "title",
                     message: "Enter the new title:",
-                    validate: function(input, answers) {
+                    validate: function (input) {
                         if (input.length > 30) {
                             return 'Must not be longer than 30 characters!'
                         }
@@ -171,51 +207,53 @@ const start = async() => {
                     message: "Select the department:",
                     choices: await viewDepartment()
                 }
-            ])
-            addRole(newRole);
+            ]);
+            await addRole(newRole);
             console.table(newRole);
-            break
+            break;
         case "ADD DEPT":
             const newDepartment = await inquirer.prompt([
                 {
                     type: "input",
                     name: "department",
                     message: "Enter a new department:",
-                    validate: function(input, answers) {
+                    validate: function (input) {
                         if (input.length > 30) {
                             return 'Must not be longer than 30 characters!'
                         }
                         return true
                     }
                 }
-            ])
-            addDepartment(newDepartment.department);
+            ]);
+            await addDepartment(newDepartment.department);
             console.table(newDepartment.department);
-            break
+            break;
         case "UPDATE EMP ROLE":
-            const updatedRole = await inquirer.prompt([
+            const { employeeId } = await inquirer.prompt([
                 {
                     type: "list",
-                    name: "employee",
+                    name: "employeeId",
                     message: "Choose the employee you would like to update",
                     choices: await viewEmployee()
-                },
+                }
+            ]);
+            const { newRoleId } = await inquirer.prompt([
                 {
                     type: "list",
-                    name: "role_id",
+                    name: "newRoleId",
                     message: "Select the employee's new role:",
                     choices: await viewRole()
                 }
-            ])
-            updateRole(updatedRole)
-            console.table(updatedRole)
-            break
+            ]);
+            await updateRole(employeeId, newRoleId);
+            // console.log('Employee role updated.');
+            break;
     }
 
 }
 
 // force true would drop tables every time you connect to db
-sequelize.sync({force: false}).then(start);
+sequelize.sync({ force: false }).then(start);
 
 
 
