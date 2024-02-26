@@ -42,16 +42,17 @@ const addDepartment = async(department) => {
     console.log(`${department} was successfully added to the database!`);
 }
 
-const viewManager = async(employee) => {
+const viewManager = async() => {
     const result = await sequelize.query("SELECT id, fname, lname FROM employee");
     return result[0].map(employee => {
         return {name: `${employee.fname} ${employee.lname}`, value: employee.id};
     })
 }
 
-// const updateRole = async() => {
-//     const result = await sequelize.query("")
-// }
+const updateRole = async(employee) => {
+    const result = await sequelize.query(`INSERT INTO employee (role_id) VALUES ('${employee.role_id}')`);
+    console.log('role updated');
+}
 
 const start = async() => {
     const response = await inquirer.prompt([
@@ -205,8 +206,9 @@ const start = async() => {
                     message: "Select the employee's new role:",
                     choices: await viewRole()
                 }
-            // updateRole()
             ])
+            updateRole(updatedRole)
+            console.table(updatedRole)
             break
     }
 
