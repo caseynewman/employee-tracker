@@ -4,17 +4,18 @@ const inquirer = require('inquirer');
 const viewEmployeeTable = async () => {
     try {
         // const result = await sequelize.query('SELECT employee.*, role.* FROM employee LEFT JOIN role ON role.id = employee.role_id');
-        const result = await sequelize.query('SELECT * FROM employee');
+        const result = await sequelize.query('SELECT employee.*, role.title, role.salary, role.department_id FROM employee INNER JOIN role ON employee.role_id = role.id ');
+
         return result[0]
     } catch (error) {
         console.error('An error occurred:', error);
     }
 }
 
-const viewEmployee = async () => {
+const viewEmployeeList = async () => {
     try {
-        const result = await viewEmployeeTable();
-        return result.map(employee => {
+        const result = await sequelize.query('SELECT * FROM employee');
+        return result[0].map(employee => {
             return { name: `${employee.fname} ${employee.lname}`, value: employee.id }
         });
     } catch (error) {
@@ -248,7 +249,7 @@ const start = async () => {
                     type: "list",
                     name: "employee_id",
                     message: "Choose the employee you would like to update",
-                    choices: await viewEmployee()
+                    choices: await viewEmployeeList()
                 }
             ]);
             const newRoleId = await inquirer.prompt([
@@ -268,7 +269,7 @@ const start = async () => {
                     type: "list",
                     name: "employee_id",
                     message: "Which employee would you like to delete?",
-                    choices: await viewEmployee()
+                    choices: await viewEmployeeList()
                 }
             ])
             await deleteEmployee(deletedEmp.employee_id);
