@@ -6,9 +6,9 @@ The Employee Tracker is a command line application, created to easily view and e
 
 ## Usage
 
-From the command line, run node index to start the application. The user can then select the option they'd like, and answer the prompts as they appear. 
+From the command line, the user will run 'node index' to start the application. They can then select what they would like to do from the list of options. After making a selection, the user will follow the prompts to view, add, update, or delete the chosen employee data.
 
-![alt text](assets/images/screenshot.png)
+[Walkthrough Video](https://drive.google.com/file/d/1meUqqwgEdS4-oxQW0kb7M0WEr_mpQhcn/view)
 
 ## Credits
 
