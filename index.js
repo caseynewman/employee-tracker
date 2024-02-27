@@ -160,12 +160,12 @@ const start = async () => {
             const newRoleId = await inquirer.prompt([
                 {
                     type: "list",
-                    name: "newRole_id",
+                    name: "new_role_id",
                     message: "Select the employee's new role:",
                     choices: await viewRole()
                 }
             ]);
-            await updateRole(newRoleId.newRole_id, employeeId.employee_id);
+            await updateRole(newRoleId.new_role_id, employeeId.employee_id);
             break;
             case "UPDATE EMP MANAGER":
                 const employeeSelect = await inquirer.prompt([
@@ -179,12 +179,12 @@ const start = async () => {
                 const newManagerId = await inquirer.prompt([
                     {
                         type: "list",
-                        name: "newManager_id",
+                        name: "new_manager_id",
                         message: "Select the employee's new manager:",
                         choices: await viewManager()
                     }
                 ]);
-                await updateEmpManager(newManagerId.newManager_id, employeeSelect.employee_id);
+                await updateEmpManager(newManagerId.new_manager_id, employeeSelect.employee_id);
                 break;
         case "DELETE EMP":
             const deletedEmp = await inquirer.prompt([
@@ -200,11 +200,3 @@ const start = async () => {
 }
 
 sequelize.sync({ force: false }).then(start);
-
-
-
-// UPDATE EMPLOYEE MANAGERS
-// VIEW EMPLOYEES BY MANAGER
-// VIEW EMPLOYEES BY DEPARTMENT
-// DELETE DEPTS, ROLES, AND EMPLOYEES
-// VIEW TOTAL UTILIZED BUDGET OF DEPT

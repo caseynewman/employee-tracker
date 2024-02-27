@@ -50,18 +50,18 @@ const viewManager = async () => {
     }
 }
 
-const updateRole = async (newRole_id, employee_id) => {
+const updateRole = async (new_role_id, employee_id) => {
     try {
-        const result = await sequelize.query('UPDATE employee SET role_id = ? WHERE id = ?', { replacements: [newRole_id, employee_id] });
+        const result = await sequelize.query('UPDATE employee SET role_id = ? WHERE id = ?', { replacements: [new_role_id, employee_id] });
         console.log('Role successfully updated!');
     } catch (error) {
         console.error('Failed to update employee role:', error);
     }
 }
 
-const updateEmpManager = async (newManager_id, employee_id) => {
+const updateEmpManager = async (new_manager_id, employee_id) => {
     try {
-        const result = await sequelize.query('UPDATE employee SET manager_id = ? WHERE id = ?', { replacements: [newManager_id, employee_id] });
+        const result = await sequelize.query('UPDATE employee SET manager_id = ? WHERE id = ?', { replacements: [new_manager_id, employee_id] });
         console.log('Manager successfully updated!');
     } catch (error) {
         console.error('Failed to update manager:', error);
